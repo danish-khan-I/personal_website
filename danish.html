@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danish Khan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <style>
+      body {
+        font-family: "Varela Round", sans-serif;
+        /* position: relative; */
+        /* box-sizing: border-box; */
+      }
+      .center {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+      .heading {
+        font-size: 96px;
+
+        font-variant: small-caps;
+        height: 0;
+        margin: 80px 0px;
+        /* font-weight: 700; */
+      }
+      .center-wrapper {
+        width: fit-content;
+        margin: auto;
+        text-align: left;
+      }
+      .profession {
+        margin-top: 120px;
+        font-size: 26px;
+      }
+      .blink {
+        animation-name: blink;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease;
+      }
+      .run-animation {
+        animation-duration: 4s;
+      }
+      .duration-1 {
+        animation-delay: 2s;
+      }
+      @keyframes blink {
+        0% {
+          color: currentColor;
+        }
+        100% {
+          color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-white">
+      <div class="center">
+        <div class="center-wrapper">
+          <p class="heading">D<span class="blink duration-1">an</span>ish</p>
+
+          <p class="heading">Kh<span class="blink duration-2">an</span>.</p>
+
+          <p class="profession">Full Stack Developer</p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const theme = {
+        0: {
+          background: "white",
+          color: "black",
+        },
+        1: {
+          background: "#111",
+          color: "white",
+        },
+      };
+      let isLightsOn = 0;
+      window.addEventListener("dblclick", function () {
+        isLightsOn = isLightsOn === 0 ? 1 : 0;
+        console.log({ isLightsOn: theme[isLightsOn] });
+        const animation = document.querySelectorAll(".blink ");
+        for (let i = 0; i < animation.length; i++) {
+          if (isLightsOn) {
+            animation[i]?.setAttribute(
+              "class",
+              `blink run-animation duration-${i + 1}`
+            );
+          } else {
+            animation[i]?.setAttribute("class", `blink  duration-${i + 1}`);
+          }
+        }
+        Object.entries(theme[isLightsOn]).map(
+          (each) => (document.querySelector("body").style[each[0]] = each[1])
+        );
+      });
+    </script>
+  </body>
+</html>
