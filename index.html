@@ -1,98 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    @import url(https://fonts.googleapis.com/css?family=Khula:700);
-body {
-  background: #111;
-}
-.hidden {
-  opacity:0;
-}
-.console-container {
- 
-  font-family:Khula;
-  font-size:4em;
-  text-align:center;
-  height:200px;
-  width:600px;
-  display:block;
-  position:absolute;
-  color:white;
-  top:0;
-  bottom:0;
-  left:0;
-  right:0;
-  margin:auto;
-}
-.console-underscore {
-   display:inline-block;
-  position:relative;
-  top:-0.14em;
-  left:10px;
-}
-  </style>
-  
-</head>
-<body>
-  <div class='console-container'><span id='text'></span><div class='console-underscore' id='console'>&#95;</div></div>
-  <script>
-    // function([string1, string2],target id,[color1,color2])    
- consoleText(['Hello World.', 'I am Danish Khan', 'Living in Bhopal ♡.','A Full Stack Developer'], 'text',['tomato','rebeccapurple','lightblue','algaegreen']);
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danish Khan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
-function consoleText(words, id, colors) {
-  if (colors === undefined) colors = ['#fff'];
-  var visible = true;
-  var con = document.getElementById('console');
-  var letterCount = 1;
-  var x = 1;
-  var waiting = false;
-  var target = document.getElementById(id)
-  
-  target.setAttribute('style', 'color:' + colors[0])
-  window.setInterval(function() {
+    <style>
+      body {
+        font-family: "Varela Round", sans-serif;
+        /* position: relative; */
+        /* box-sizing: border-box; */
+      }
+      .center {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+      .heading {
+        font-size: 96px;
 
-    if (letterCount === 0 && waiting === false) {
-      waiting = true;
-      target.innerHTML = words[0].substring(0, letterCount)
-      window.setTimeout(function() {
-        var usedColor = colors.shift();
-        colors.push(usedColor);
-        var usedWord = words.shift();
-        words.push(usedWord);
-        x = 1;
-        target.setAttribute('style', 'color:' + colors[0])
-        letterCount += x;
-        waiting = false;
-      }, 1000)
-    } else if (letterCount === words[0].length + 1 && waiting === false) {
-      waiting = true;
-      window.setTimeout(function() {
-        x = -1;
-        letterCount += x;
-        waiting = false;
-      }, 1000)
-    } else if (waiting === false) {
-      target.innerHTML = words[0].substring(0, letterCount)
-      letterCount += x;
-    }
-  }, 120)
-  window.setInterval(function() {
-    if (visible === true) {
-      con.className = 'console-underscore hidden'
-      visible = false;
+        font-variant: small-caps;
+        height: 0;
+        margin: 80px 0px;
+        /* font-weight: 700; */
+      }
+      .center-wrapper {
+        width: fit-content;
+        margin: auto;
+        text-align: left;
+      }
+      .profession {
+        margin-top: 120px;
+        font-size: 26px;
+      }
+      .blink {
+        animation-name: blink;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease;
+      }
+      .run-animation {
+        animation-duration: 4s;
+      }
+      .duration-1 {
+        animation-delay: 2s;
+      }
+      @keyframes blink {
+        0% {
+          color: currentColor;
+        }
+        100% {
+          color: transparent;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-white">
+      <div class="center">
+        <div class="center-wrapper">
+          <p class="heading">D<span class="blink duration-1">an</span>ish</p>
 
-    } else {
-      con.className = 'console-underscore'
+          <p class="heading">Kh<span class="blink duration-2">an</span>.</p>
 
-      visible = true;
-    }
-  }, 400)
-}
-  </script>
-</body>
+          <p class="profession">Full Stack Developer</p>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      const theme = {
+        0: {
+          background: "white",
+          color: "black",
+        },
+        1: {
+          background: "#111",
+          color: "white",
+        },
+      };
+      let isLightsOn = 0;
+      window.addEventListener("dblclick", function () {
+        isLightsOn = isLightsOn === 0 ? 1 : 0;
+        console.log({ isLightsOn: theme[isLightsOn] });
+        const animation = document.querySelectorAll(".blink ");
+        for (let i = 0; i < animation.length; i++) {
+          if (isLightsOn) {
+            animation[i]?.setAttribute(
+              "class",
+              `blink run-animation duration-${i + 1}`
+            );
+          } else {
+            animation[i]?.setAttribute("class", `blink  duration-${i + 1}`);
+          }
+        }
+        Object.entries(theme[isLightsOn]).map(
+          (each) => (document.querySelector("body").style[each[0]] = each[1])
+        );
+      });
+    </script>
+  </body>
 </html>
