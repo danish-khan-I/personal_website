@@ -9,7 +9,7 @@ const Experience = ({ jobTitle, company, start, end = "Present", details }) => {
         {start}-{end}
       </p>
       <div>
-        <p>{details}</p>
+        <p className="font-italic">{details}</p>
       </div>
     </div>
   );

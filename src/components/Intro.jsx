@@ -4,13 +4,17 @@ import pic from "../assets/pic.jpg";
 import { Inplace, InplaceDisplay, InplaceContent } from "primereact/inplace";
 
 const Intro = () => {
+  const redirect = (link) => () => {
+    window.open(link, "_blank");
+  };
   return (
     <div className="container">
       <div className="grid">
-        <div className="col-6">
+        <div className="col-12 md:col-6">
           <h1>I am Danish.</h1>
           <h4>
-            Creative Developer with 4+ years designing useful, full stack development in various tech stacks.
+            Creative Developer with 4+ years designing useful, full stack
+            development in various tech stacks.
           </h4>
           <div className="grid align-items-center">
             <div className="col-2">Phone</div>
@@ -42,12 +46,14 @@ const Intro = () => {
                 className=" p-button-rounded p-button-text"
                 aria-label="github"
                 aria-hidden="true"
+                onClick={redirect("https://github.com/danish-khan-I")}
               />
               <Button
                 icon="pi pi-instagram"
                 className=" p-button-rounded p-button-text"
                 aria-label="instagram"
                 aria-hidden="true"
+                onClick={redirect("https://www.instagram.com/mr__complicated/")}
               />
 
               <Button
@@ -55,6 +61,7 @@ const Intro = () => {
                 className=" p-button-rounded p-button-text"
                 aria-label="linkedin"
                 aria-hidden="true"
+                onClick={redirect("https://www.linkedin.com/in/danish-khan-i/")}
               />
 
               <Button
@@ -62,6 +69,7 @@ const Intro = () => {
                 className=" p-button-rounded p-button-text"
                 aria-label="twitter"
                 aria-hidden="true"
+                onClick={redirect("https://twitter.com/mr__complicated")}
               />
             </div>
             <div className="col-12">
@@ -77,7 +85,7 @@ const Intro = () => {
             </div>
           </div>
         </div>
-        <div className="col-6 align-self-center">
+        <div className="col-12 md:col-6 align-self-center">
           <img src={pic} alt="" className="w-full" />
         </div>
       </div>
