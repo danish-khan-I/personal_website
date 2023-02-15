@@ -1,0 +1,10 @@
+{
+  "module": "es6",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

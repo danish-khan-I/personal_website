@@ -13,8 +13,7 @@ const Intro = () => {
         <div className="col-12 md:col-6">
           <h1>I am Danish.</h1>
           <h4>
-            Creative Developer with 4+ years designing useful, full stack
-            development in various tech stacks.
+          Creative Developer with 4+ years designing useful, approachable user interfaces and user experiences. Knowledgeable on all aspects of best practices and emerging UI development techniques. Detail-oriented, organised and meticulous employee. Works at a fast pace to meet tight deadlines
           </h4>
           <div className="grid align-items-center">
             <div className="col-2">Phone</div>
@@ -24,16 +23,23 @@ const Intro = () => {
                   click to view
                 </InplaceDisplay>
                 <InplaceContent>
-                  <a href="tel:+919340917569">+91 93409-17569</a>
+                  <a href="tel:+919340917569" className="text-primary">+91 93409-17569</a>
                 </InplaceContent>
               </Inplace>
             </div>
 
             <div className="col-2">Email</div>
             <div className="col-10">
-              <a href="mailto:dkhan9591@gmail.com?subject=Hi Danish, We would like to ..&body=Hi Danish">
-                dkhan9591@gmail.com
-              </a>
+              <Inplace>
+                <InplaceDisplay className="p-0 cursor-pointer	">
+                  click to view
+                </InplaceDisplay>
+                <InplaceContent>
+                  <a href="mailto:dkhan9591@gmail.com?subject=Hi Danish, We would like to ..&body=Hi Danish" className="text-primary">
+                    dkhan9591@gmail.com
+                  </a>
+                </InplaceContent>
+              </Inplace>
             </div>
 
             <div className="col-2">Address</div>
@@ -85,7 +91,7 @@ const Intro = () => {
             </div>
           </div>
         </div>
-        <div className="col-12 md:col-6 align-self-center">
+        <div className="col-12 md:col-6 align-self-center hidden md:block">
           <img src={pic} alt="" className="w-full" />
         </div>
       </div>
