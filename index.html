@@ -4,10 +4,141 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title> Danish - ( ˈdeɪnɪʃ/ ) </title>
+    <title>Danish - ( ˈdeɪnɪʃ/ )</title>
+    <style>
+      body,
+      html {
+        transition: background-color 0.3s ease; /* Add transition effect for background-color */
+
+        height: 100%;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        width: 100%;
+      }
+
+      #name-container {
+        text-align: center;
+      }
+      #name {
+        transition: color 0.3s ease; /* Add transition effect for color */
+      }
+      h1 {
+        font-size: 5em; /* Adjust based on your preference */
+        color: #333;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const bodyEl = document.body; // Access the body element
+
+        const nameEl = document.getElementById("name");
+        const names = [
+          "Danish", // English
+          "Dansk", // Danish
+          "Danés", // Spanish
+          "Danois", // French
+          "Dänisch", // German
+          "Danese", // Italian
+          "Deens", // Dutch
+          "Dinamarquês", // Portuguese
+          "Датский", // Russian
+          "デンマーク語", // Japanese
+          "丹麦语", // Chinese Simplified
+          "丹麥語", // Chinese Traditional
+          "데니쉬", // Korean
+          "Daniş", // Turkish
+          "ดานิช", // Thai
+          "Dán", // Vietnamese
+          "דנית", // Hebrew
+          "دانش", // Arabic
+          "Danska", // Croatian, Serbian, Bosnian
+          "Duński", // Polish
+          "Dánai", // Hungarian
+          "Danų", // Lithuanian
+          "Dāņu", // Latvian
+          "Taani", // Estonian
+          "Dán", // Icelandic
+          "Danski", // Macedonian
+          "Дански", // Bulgarian
+          "Danese", // Romanian
+          "Датська", // Ukrainian
+          "Dansk", // Norwegian
+          "Danska", // Swedish
+          "Daniska", // Maltese
+          "डेनिश", // Hindi
+          "ড্যানিশ", // Bengali
+          "ડેનિશ", // Gujarati
+          "ଡାନିସ୍", // Odia
+          "ਡੈਨਿਸ਼", // Punjabi
+          "டேனிஷ்", // Tamil
+          "డానిష్", // Telugu
+          "ಡ್ಯಾನಿಷ್", // Kannada
+          "ഡാനിഷ്", // Malayalam
+          "ඩැනිෂ්", // Sinhala
+          "ดานิช", // Thai
+          "ດານິຊ", // Lao
+          "ဒိန်းမတ်ဘာသာ", // Burmese
+          "დანიური", // Georgian
+          "Դանիական", // Armenian
+          "Дат теле", // Tatar
+          "Қалмақ теле", // Kalmyk
+          "Данийн хэл", // Mongolian
+          "Dánach", // Scots Gaelic
+          "Dánsk", // Faroese
+          "ዴኒሽ", // Amharic
+          "ዳኒሽ", // Tigrinya
+          "ዳንሽ", // Oromo
+          "ዳንኤሽ", // Somali
+          "دەنمارکی", // Kurdish (Sorani)
+          "دەنمارکی", // Kurdish (Kurmanji)
+          "دانش", // Pashto
+          "ڈینش", // Urdu
+          "डॅनिश", // Marathi
+        ];
+
+        // const names = [your names array];
+        const hoverWords = ["wisdom", "knowledge", "science"];
+        let index = 0;
+        let interval;
+
+        // Function to start cycling words
+        function startCycle(words, delay) {
+          if (interval) clearInterval(interval); // Clear existing interval if any
+          interval = setInterval(() => {
+            nameEl.textContent = words[index];
+            index = (index + 1) % words.length; // Loop back to the start of the array
+          }, delay);
+        }
+
+        // Start cycling names by default
+        startCycle(names, 300);
+
+        // Change to hoverWords array on mouseover
+        nameEl.addEventListener("mouseover", () => {
+          index = 0; // Reset index for hover words
+          startCycle(hoverWords, 300);
+          bodyEl.style.backgroundColor = "black";
+          nameEl.style.color = "white";
+        });
+
+        // Revert to names array on mouseout
+        nameEl.addEventListener("mouseout", () => {
+          index = 0; // Reset index for names
+          startCycle(names, 300);
+          bodyEl.style.backgroundColor = ""; // Change the body's background to black
+
+          nameEl.style.color = "";
+        });
+      });
+    </script>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div id="name-container">
+      <h1 id="name">Danish</h1>
+    </div>
   </body>
 </html>
