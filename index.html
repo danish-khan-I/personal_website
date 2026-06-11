@@ -1,32 +1,765 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Danish — ( ˈdeɪnɪʃ/ )</title>
-  <meta name="description" content="A small room. A crow lives here." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%230a0e1a'/%3E%3Crect x='5' y='4' width='6' height='2' fill='%230d0d12'/%3E%3Crect x='4' y='6' width='9' height='6' fill='%230d0d12'/%3E%3Crect x='13' y='8' width='2' height='1' fill='%233a2a18'/%3E%3Crect x='10' y='7' width='1' height='1' fill='%23ffd966'/%3E%3Crect x='6' y='12' width='1' height='2' fill='%233a2a18'/%3E%3Crect x='9' y='12' width='1' height='2' fill='%233a2a18'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DANISH — Full-Stack Engineer &amp; Builder</title>
+<meta name="description" content="Danish — full-stack engineer with 8+ years building platforms, products, and one actual house. React, NestJS, micro-frontends, SaaS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Space+Grotesk:wght@300..700&family=JetBrains+Mono:ital,wght@0,300..700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============ THE DRAWING SET ============
+   Concept: a living architectural blueprint.
+   Danish builds software, companies, and an
+   actual house — so the portfolio is drafted,
+   dimensioned, and annotated like a sheet set.
+=========================================== */
+:root{
+  --paper:#0A1B45;          /* blueprint field */
+  --paper-deep:#061233;     /* darker pools */
+  --line:#5E86E8;           /* drafting line */
+  --line-faint:rgba(94,134,232,.16);
+  --line-mid:rgba(94,134,232,.38);
+  --chalk:#EAF1FF;          /* primary ink */
+  --chalk-dim:#9FB4E6;      /* secondary ink */
+  --safety:#FF6B2C;         /* construction orange */
+  --tape:#FFD23F;           /* measuring tape */
+  --display:'Bricolage Grotesque',sans-serif;
+  --body:'Space Grotesk',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --ruler:28px;
+  --gutter:clamp(20px,4vw,72px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper);
+  color:var(--chalk);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+::selection{background:var(--safety);color:var(--paper-deep)}
+
+/* ---------- backdrop grid canvas ---------- */
+#gridCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ---------- rulers ---------- */
+.ruler{position:fixed;z-index:60;background:var(--paper-deep);pointer-events:none}
+#rulerTop{top:0;left:var(--ruler);right:0;height:var(--ruler);border-bottom:1px solid var(--line-mid)}
+#rulerLeft{top:var(--ruler);left:0;bottom:0;width:var(--ruler);border-right:1px solid var(--line-mid)}
+#rulerCorner{position:fixed;top:0;left:0;width:var(--ruler);height:var(--ruler);z-index:61;
+  background:var(--paper-deep);border-right:1px solid var(--line-mid);border-bottom:1px solid var(--line-mid);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--safety);pointer-events:none}
+#markerX{position:fixed;top:0;width:1px;height:var(--ruler);background:var(--safety);z-index:62;pointer-events:none}
+#markerY{position:fixed;left:0;height:1px;width:var(--ruler);background:var(--safety);z-index:62;pointer-events:none}
+
+/* ---------- CAD cursor ---------- */
+#cursor{position:fixed;z-index:100;pointer-events:none;top:0;left:0;will-change:transform}
+#cursor .h,#cursor .v{position:absolute;background:var(--safety)}
+#cursor .h{width:34px;height:1px;left:-17px;top:0}
+#cursor .v{height:34px;width:1px;top:-17px;left:0}
+#cursor .ring{position:absolute;width:9px;height:9px;border:1px solid var(--safety);border-radius:50%;left:-4.5px;top:-4.5px}
+#coords{position:absolute;left:16px;top:12px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  color:var(--tape);background:rgba(6,18,51,.85);padding:2px 7px;border:1px solid var(--line-mid);white-space:nowrap}
+@media (pointer:coarse){#cursor,#markerX,#markerY{display:none}}
+@media (pointer:fine){body{cursor:crosshair}a,button{cursor:crosshair}}
+
+/* ---------- layout chrome ---------- */
+.sheet{position:relative;z-index:2;padding:0 var(--gutter);margin-left:var(--ruler)}
+@media(max-width:720px){
+  :root{--ruler:0px}
+  .ruler,#rulerCorner{display:none}
+}
+
+/* ---------- nav ---------- */
+nav{position:fixed;top:var(--ruler);left:var(--ruler);right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px var(--gutter);font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  background:linear-gradient(180deg,rgba(6,18,51,.92),rgba(6,18,51,0));backdrop-filter:blur(2px)}
+nav .logo{font-weight:700;color:var(--chalk);text-decoration:none;display:flex;align-items:center;gap:10px}
+nav .logo .dot{width:8px;height:8px;background:var(--safety);display:inline-block}
+nav ul{display:flex;gap:26px;list-style:none}
+nav ul a{color:var(--chalk-dim);text-decoration:none;transition:color .2s}
+nav ul a:hover,nav ul a:focus-visible{color:var(--safety)}
+nav ul a span{color:var(--safety);margin-right:5px}
+.site-locale{display:flex;align-items:center;gap:9px;color:var(--chalk-dim);white-space:nowrap}
+.site-locale #skyIcon{color:var(--tape);flex:none}
+.site-locale #skyIcon.is-night{color:var(--line)}
+.site-locale .loc-sep{color:var(--line)}
+.site-locale #localeTime{color:var(--chalk)}
+.site-locale #localeTz{color:var(--safety)}
+@media(max-width:1120px){.site-locale #localeTz{display:none}}
+@media(max-width:560px){.site-locale span:not(#localeTime){display:none}}
+@media(max-width:860px){nav ul{display:none}}
+
+/* ---------- hero / title sheet ---------- */
+header{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding-top:120px;padding-bottom:0;position:relative}
+.hero-eyebrow{font-family:var(--mono);font-size:clamp(10px,1.2vw,13px);letter-spacing:.22em;
+  text-transform:uppercase;color:var(--tape);margin-bottom:18px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-eyebrow .sep{color:var(--line)}
+h1.hero-name{
+  font-family:var(--display);
+  font-size:clamp(64px,17.5vw,290px);
+  font-weight:800;line-height:.84;letter-spacing:-.02em;
+  text-transform:uppercase;user-select:none;
+  display:flex;
+}
+h1.hero-name span{
+  color:transparent;
+  -webkit-text-stroke:1.5px var(--chalk);
+  transition:color .18s ease,-webkit-text-stroke-color .18s ease,transform .18s ease;
+  display:inline-block;
+}
+h1.hero-name span:hover{color:var(--safety);-webkit-text-stroke-color:var(--safety);transform:translateY(-.04em)}
+h1.hero-name span.filled{color:var(--chalk)}
+.hero-sub{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:end;
+  margin-top:34px;padding-bottom:42px;border-bottom:1px solid var(--line-mid)}
+.hero-sub p.lede{font-size:clamp(17px,2vw,23px);font-weight:300;max-width:34ch;line-height:1.45;color:var(--chalk)}
+.hero-sub p.lede em{font-style:normal;color:var(--safety)}
+.titleblock{font-family:var(--mono);font-size:11px;letter-spacing:.05em;border:1px solid var(--line-mid);background:rgba(6,18,51,.66)}
+.titleblock div{display:flex;justify-content:space-between;gap:18px;padding:7px 12px;border-bottom:1px solid var(--line-faint)}
+.titleblock div:last-child{border-bottom:none}
+.titleblock b{color:var(--chalk-dim);font-weight:400}
+.titleblock i{font-style:normal;color:var(--chalk)}
+.titleblock .rev i{color:var(--safety)}
+@media(max-width:860px){.hero-sub{grid-template-columns:1fr}}
+.dim{position:relative;font-family:var(--mono);font-size:10px;color:var(--line);letter-spacing:.1em}
+.dim-hero{display:flex;align-items:center;gap:10px;margin-top:10px}
+.dim-hero::before,.dim-hero::after{content:"";flex:1;height:1px;background:var(--line-mid)}
+.scroll-cue{position:absolute;right:var(--gutter);bottom:120px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.3em;color:var(--chalk-dim);writing-mode:vertical-rl;display:flex;align-items:center;gap:10px}
+.scroll-cue::after{content:"";width:1px;height:54px;background:var(--safety);animation:drop 1.8s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+@media(max-width:860px){.scroll-cue{display:none}}
+
+/* ---------- marquee ---------- */
+.marquee{position:relative;z-index:2;margin-left:var(--ruler);overflow:hidden;border-top:1px solid var(--line-mid);
+  border-bottom:1px solid var(--line-mid);background:var(--paper-deep);padding:13px 0}
+.marquee .track{display:flex;width:max-content;animation:slide 30s linear infinite;font-family:var(--mono);
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--chalk-dim);white-space:nowrap}
+.marquee .track span{padding:0 1.6em}
+.marquee .track .x{color:var(--safety)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- generic section chrome ---------- */
+section{padding:clamp(80px,12vh,150px) 0;position:relative}
+.sheet-head{display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+  border-bottom:1px solid var(--line-mid);padding-bottom:16px;margin-bottom:clamp(36px,6vh,64px)}
+.sheet-head h2{font-family:var(--display);font-weight:700;font-size:clamp(30px,5.4vw,68px);
+  text-transform:uppercase;letter-spacing:-.01em;line-height:1}
+.sheet-head .tag{font-family:var(--mono);font-size:11px;color:var(--safety);letter-spacing:.18em;white-space:nowrap}
+
+/* ---------- materials schedule ---------- */
+.schedule{width:100%;border-collapse:collapse;font-size:15px}
+.schedule th{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--tape);text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-mid)}
+.schedule td{padding:16px 14px;border-bottom:1px solid var(--line-faint);vertical-align:top}
+.schedule tr{transition:background .18s}
+.schedule tbody tr:hover{background:rgba(94,134,232,.08)}
+.schedule .mat{font-family:var(--display);font-weight:600;font-size:19px;white-space:nowrap}
+.schedule .grade{font-family:var(--mono);font-size:12px;color:var(--safety);white-space:nowrap}
+.schedule .app{color:var(--chalk-dim);max-width:52ch}
+@media(max-width:720px){
+  .schedule thead{display:none}
+  .schedule td{display:block;padding:6px 0;border:none}
+  .schedule tbody tr{display:block;padding:16px 0;border-bottom:1px solid var(--line-faint)}
+}
+.about-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:clamp(32px,5vw,80px)}
+.about-grid .note{font-size:clamp(17px,1.7vw,21px);font-weight:300;line-height:1.55;color:var(--chalk)}
+.about-grid .note p+p{margin-top:1.2em}
+.about-grid .note .hl{color:var(--safety)}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr}}
+
+/* ---------- built works ---------- */
+.works{display:flex;flex-direction:column}
+.work{border-bottom:1px solid var(--line-mid);padding:clamp(28px,4vh,44px) 0;position:relative;
+  display:grid;grid-template-columns:90px 1fr 1fr;gap:clamp(18px,3vw,48px);align-items:start;
+  transition:padding .25s ease}
+.work:first-child{border-top:1px solid var(--line-mid)}
+.work .no{font-family:var(--mono);font-size:12px;color:var(--safety);letter-spacing:.1em;padding-top:10px}
+.work h3{font-family:var(--display);font-weight:700;font-size:clamp(28px,4.6vw,58px);
+  text-transform:uppercase;line-height:.95;letter-spacing:-.01em;transition:color .2s,transform .25s ease}
+.work .meta{font-family:var(--mono);font-size:11px;color:var(--chalk-dim);letter-spacing:.08em;margin-top:12px;text-transform:uppercase}
+.work .desc{color:var(--chalk-dim);max-width:52ch;font-size:15px}
+.work .desc b{color:var(--chalk);font-weight:500}
+.work .stamp{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;padding:4px 10px;border:1px solid var(--line-mid);color:var(--tape)}
+.work::after{ /* crosshatch reveal */
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:repeating-linear-gradient(45deg,rgba(255,107,44,.07) 0 2px,transparent 2px 9px)}
+.work:hover::after{opacity:1}
+.work:hover h3{color:var(--safety);transform:translateX(10px)}
+@media(max-width:900px){.work{grid-template-columns:1fr}.work .no{padding-top:0}}
+
+/* ---------- general notes ---------- */
+.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-mid);border:1px solid var(--line-mid)}
+.notes article{background:var(--paper);padding:clamp(24px,3vw,40px);transition:background .2s}
+.notes article:hover{background:var(--paper-deep)}
+.notes .n-no{font-family:var(--mono);font-size:11px;color:var(--safety);letter-spacing:.16em}
+.notes h3{font-family:var(--display);font-size:clamp(19px,2vw,25px);font-weight:600;margin:14px 0 10px;text-transform:uppercase}
+.notes p{color:var(--chalk-dim);font-size:14.5px}
+@media(max-width:860px){.notes{grid-template-columns:1fr}}
+
+/* ---------- site history ---------- */
+.history{display:flex;flex-direction:column}
+.phase{display:grid;grid-template-columns:90px 230px 1fr 1fr;gap:clamp(16px,2.5vw,40px);
+  padding:26px 0;border-bottom:1px solid var(--line-faint);align-items:baseline;position:relative;transition:background .2s}
+.phase:first-child{border-top:1px solid var(--line-mid)}
+.phase:last-of-type{border-bottom:1px solid var(--line-mid)}
+.phase:hover{background:rgba(94,134,232,.07)}
+.phase .p-no{font-family:var(--mono);font-size:11px;color:var(--safety);letter-spacing:.12em}
+.phase .p-date{font-family:var(--mono);font-size:12px;color:var(--tape);letter-spacing:.08em}
+.phase .p-role{font-family:var(--display);font-weight:600;font-size:clamp(17px,1.9vw,23px);text-transform:uppercase;line-height:1.15}
+.phase .p-role small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--chalk-dim);
+  text-transform:uppercase;letter-spacing:.1em;margin-top:5px}
+.phase .p-note{color:var(--chalk-dim);font-size:14px;max-width:46ch}
+.phase.current::before{content:"";position:absolute;left:-16px;top:36px;width:7px;height:7px;border-radius:50%;
+  background:var(--safety);animation:pulse 1.6s ease-in-out infinite}
+.phase.sub{padding:18px 0;background:rgba(6,18,51,.45)}
+.phase.sub .p-no{padding-left:26px;position:relative}
+.phase.sub .p-no::before{content:"↳";position:absolute;left:6px;color:var(--line);font-size:13px}
+.phase.sub .p-role{font-size:clamp(15px,1.6vw,19px)}
+.phase.sub .p-note{font-size:13.5px}
+@media(max-width:980px){.phase{grid-template-columns:80px 1fr}.phase .p-note{grid-column:1/-1}}
+.permits{margin-top:clamp(40px,7vh,64px);display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line-mid);border:1px solid var(--line-mid)}
+.permits article{background:var(--paper);padding:clamp(22px,3vw,34px)}
+.permits .p-tag{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--tape);text-transform:uppercase}
+.permits h3{font-family:var(--display);font-size:clamp(17px,1.8vw,22px);font-weight:600;margin:12px 0 6px;text-transform:uppercase}
+.permits p{color:var(--chalk-dim);font-size:14px;font-family:var(--mono)}
+@media(max-width:720px){.permits{grid-template-columns:1fr}}
+
+/* ---------- site status strip ---------- */
+.status{display:flex;flex-wrap:wrap;gap:12px 36px;align-items:center;font-family:var(--mono);font-size:12px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--chalk-dim);
+  border:1px dashed var(--line-mid);padding:18px 22px;margin-top:clamp(40px,7vh,70px)}
+.status .blink{width:9px;height:9px;border-radius:50%;background:var(--safety);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+/* ---------- contact ---------- */
+.contact h2.big{
+  font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.9;letter-spacing:-.02em;
+  font-size:clamp(46px,10.5vw,170px)}
+.contact h2.big a{color:var(--chalk);text-decoration:none;display:inline-block;position:relative;transition:color .2s}
+.contact h2.big a:hover{color:var(--safety)}
+.contact h2.big a::after{content:"";position:absolute;left:0;bottom:.04em;height:.045em;width:100%;background:var(--safety);
+  transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+.contact h2.big a:hover::after{transform:scaleX(1)}
+.contact .rfp{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--tape);margin-bottom:22px}
+.contact .links{display:flex;flex-wrap:wrap;gap:14px;margin-top:42px}
+.contact .links a{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--chalk);text-decoration:none;border:1px solid var(--line-mid);padding:12px 22px;transition:all .2s}
+.contact .links a:hover,.contact .links a:focus-visible{border-color:var(--safety);color:var(--safety);transform:translateY(-3px)}
+
+/* ---------- footer ---------- */
+footer{margin-left:var(--ruler);position:relative;z-index:2;border-top:1px solid var(--line-mid);
+  padding:26px var(--gutter);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--chalk-dim)}
+footer .o{color:var(--safety)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.reveal.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
 </head>
 <body>
-  <div id="stage">
-    <canvas id="room" width="320" height="180"></canvas>
+
+<canvas id="gridCanvas" aria-hidden="true"></canvas>
+<canvas id="rulerTop" class="ruler" aria-hidden="true"></canvas>
+<canvas id="rulerLeft" class="ruler" aria-hidden="true"></canvas>
+<div id="rulerCorner" aria-hidden="true">PX</div>
+<div id="markerX" aria-hidden="true"></div>
+<div id="markerY" aria-hidden="true"></div>
+<div id="cursor" aria-hidden="true">
+  <div class="h"></div><div class="v"></div><div class="ring"></div>
+  <div id="coords">X 0000 · Y 0000</div>
+</div>
+
+<nav>
+  <a class="logo" href="#top"><span class="dot"></span>DANISH / DRAWING SET</a>
+  <div class="site-locale" aria-label="Location and local time">
+    <svg id="skyIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"></svg>
+    <span>BHOPAL, INDIA</span>
+    <span class="loc-sep">/</span>
+    <span id="localeTime">--:--</span>
+    <span id="localeTz">IST UTC+05:30</span>
+  </div>
+  <ul>
+    <li><a href="#structure"><span>S-100</span>Structure</a></li>
+    <li><a href="#works"><span>A-200</span>Built Works</a></li>
+    <li><a href="#notes"><span>G-300</span>General Notes</a></li>
+    <li><a href="#history"><span>H-500</span>Site History</a></li>
+    <li><a href="#contact"><span>C-400</span>RFP</a></li>
+  </ul>
+</nav>
+
+<!-- ============ SHEET G-001 : TITLE ============ -->
+<header id="top" class="sheet">
+  <div class="hero-eyebrow reveal">
+    <span>SHEET G-001</span><span class="sep">/</span>
+    <span>FULL-STACK ENGINEER</span><span class="sep">/</span>
+    <span>BHOPAL · IN · IST</span><span class="sep">/</span>
+    <span>EST. 8+ YRS</span>
+  </div>
+  <h1 class="hero-name" id="heroName" aria-label="Danish">
+    <span>D</span><span>A</span><span>N</span><span>I</span><span>S</span><span>H</span>
+  </h1>
+  <div class="dim dim-hero reveal"><span id="nameDim">SPAN — MEASURING…</span></div>
+  <div class="hero-sub reveal">
+    <p class="lede">I draft systems and then I pour the concrete. Currently constructing software platforms, two SaaS companies, and <em>one actual house</em> — all load-bearing.</p>
+    <div class="titleblock" role="table" aria-label="Title block">
+      <div><b>PROJECT</b><i>PORTFOLIO — ISSUE FOR HIRE</i></div>
+      <div><b>DRAWN BY</b><i>DANISH</i></div>
+      <div><b>CHECKED BY</b><i>PRODUCTION TRAFFIC</i></div>
+      <div><b>SCALE</b><i>1:1 — NO MOCKUPS</i></div>
+      <div class="rev"><b>REV</b><i>2026.06 — LATEST</i></div>
+    </div>
+  </div>
+  <div class="scroll-cue">SCROLL TO SECTION</div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="marqueeTrack">
+    <span>REACT</span><span class="x">✦</span><span>NEXT.JS</span><span class="x">✦</span><span>NESTJS</span><span class="x">✦</span><span>TYPESCRIPT</span><span class="x">✦</span><span>MICRO-FRONTENDS</span><span class="x">✦</span><span>MODULE FEDERATION</span><span class="x">✦</span><span>REACT NATIVE</span><span class="x">✦</span><span>POSTGRESQL</span><span class="x">✦</span><span>GRAPHQL</span><span class="x">✦</span><span>DOCKER</span><span class="x">✦</span><span>LARAVEL</span><span class="x">✦</span><span>SMART ON FHIR</span><span class="x">✦</span>
+  </div>
+</div>
+
+<!-- ============ SHEET S-100 : STRUCTURE ============ -->
+<section id="structure" class="sheet">
+  <div class="sheet-head reveal">
+    <h2>Structure</h2>
+    <span class="tag">SHEET S-100 — MATERIALS SCHEDULE</span>
+  </div>
+  <div class="about-grid">
+    <div class="note reveal">
+      <p>Eight-plus years of full-stack work, from multi-tenant SaaS foundations to healthcare platforms where the architecture has to hold real clinical weight.</p>
+      <p>Day job: senior engineer on a React healthcare platform — micro-frontend architecture, embedded EHR apps, the kind of scheduling logic that needs <span class="hl">a structural engineer's patience</span>.</p>
+      <p>Nights and weekends: founding and shipping products for India's underserved SMB markets. Car dealers. Wedding vendors. People the big platforms forgot.</p>
+    </div>
+    <div class="reveal">
+      <table class="schedule">
+        <thead><tr><th>Material</th><th>Grade</th><th>Application</th></tr></thead>
+        <tbody>
+          <tr><td class="mat">React / Next.js</td><td class="grade">LOAD-BEARING</td><td class="app">Primary frame. Everything visible stands on it — dashboards, marketplaces, clinical UIs.</td></tr>
+          <tr><td class="mat">TypeScript</td><td class="grade">REBAR</td><td class="app">Run through every pour. Catches the cracks before they reach production.</td></tr>
+          <tr><td class="mat">NestJS / Laravel</td><td class="grade">FOUNDATION</td><td class="app">Multi-tenant backends, GraphQL &amp; REST APIs, subscription billing, auth.</td></tr>
+          <tr><td class="mat">PostgreSQL</td><td class="grade">FOOTINGS</td><td class="app">Where the weight actually goes. Prisma-managed, occasionally pgvector-augmented.</td></tr>
+          <tr><td class="mat">Module Federation</td><td class="grade">PREFAB</td><td class="app">Micro-frontends assembled on site — independent apps craned into one shell.</td></tr>
+          <tr><td class="mat">React Native / Expo</td><td class="grade">MODULAR WING</td><td class="app">Mobile extensions of the main structure, sharing the same blueprints.</td></tr>
+          <tr><td class="mat">Docker / Terraform / CI</td><td class="grade">SITE LOGISTICS</td><td class="app">Monorepos, pipelines, infra-as-code, reverse proxies. Materials arrive on time, every deploy.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHEET A-200 : BUILT WORKS ============ -->
+<section id="works" class="sheet">
+  <div class="sheet-head reveal">
+    <h2>Built Works</h2>
+    <span class="tag">SHEET A-200 — AS-BUILT DRAWINGS</span>
+  </div>
+  <div class="works">
+
+    <article class="work reveal">
+      <div class="no">A-201</div>
+      <div>
+        <h3>Clinical Platform</h3>
+        <div class="meta">Healthcare · Micro-Frontends · 2024—Now</div>
+      </div>
+      <div class="desc">
+        Senior engineer on a React healthcare platform: <b>micro-frontend architecture with Vite Module Federation</b>, an embedded app living inside a major EHR via <b>SMART on FHIR</b>, and interconnected care-plan, scheduling and appointment systems where the edge cases are clinical, not cosmetic.
+        <br><span class="stamp">REACT · FEDERATION · FHIR · AZURE AI SEARCH</span>
+      </div>
+    </article>
+
+    <article class="work reveal">
+      <div class="no">A-202</div>
+      <div>
+        <h3>Mandapp</h3>
+        <div class="meta">Founder · SaaS · 2026</div>
+      </div>
+      <div class="desc">
+        Venue &amp; event-rental platform for India's tent houses and wedding vendors — a WhatsApp-first industry getting its first real software. <b>NestJS, Next.js, GraphQL, Prisma, Turborepo</b>, self-hosted on Hetzner with Docker and Caddy.
+        <br><span class="stamp">NESTJS · NEXT.JS · GRAPHQL · POSTGRES</span>
+      </div>
+    </article>
+
+    <article class="work reveal">
+      <div class="no">A-203</div>
+      <div>
+        <h3>CarlyTec</h3>
+        <div class="meta">Founder · B2B SaaS</div>
+      </div>
+      <div class="desc">
+        Website builder for car dealerships — <b>multi-tenant architecture</b> where every dealer gets a branded storefront in minutes, with SEO, inventory and lead capture wired in from day one.
+        <br><span class="stamp">MULTI-TENANT · SEO · WHATSAPP API</span>
+      </div>
+    </article>
+
+    <article class="work reveal">
+      <div class="no">A-204</div>
+      <div>
+        <h3>ListKars</h3>
+        <div class="meta">Founder · B2C Marketplace</div>
+      </div>
+      <div class="desc">
+        Consumer car marketplace for India — listings, discovery and dealer connections built for buyers who live on their phones, with growth driven by <b>search indexing and Instagram campaigns</b> rather than ad budgets.
+        <br><span class="stamp">MARKETPLACE · GROWTH · MOBILE-FIRST</span>
+      </div>
+    </article>
+
+    <article class="work reveal">
+      <div class="no">A-205</div>
+      <div>
+        <h3>CouplePlay</h3>
+        <div class="meta">Indie · Mobile App</div>
+      </div>
+      <div class="desc">
+        A couples game app in <b>React Native / Expo</b> with realtime online play over Supabase — built end-to-end solo: design, gameplay, sync engine, store builds, and a zero-budget launch plan.
+        <br><span class="stamp">REACT NATIVE · SUPABASE REALTIME · EAS</span>
+      </div>
+    </article>
+
+    <article class="work reveal">
+      <div class="no">A-206</div>
+      <div>
+        <h3>The House</h3>
+        <div class="meta">General Contractor of My Own Life · Ongoing</div>
+      </div>
+      <div class="desc">
+        A literal 20×30 ft building in Bhopal. Ground floor: <b>shipped to production</b>. Upper floors: in active development. Same engineering brain — load calculations, solar sizing, budget forecasting — different stack entirely.
+        <br><span class="stamp">CONCRETE · STEEL · 3KWP SOLAR (PLANNED)</span>
+      </div>
+    </article>
+
+  </div>
+  <div class="status reveal">
+    <span class="blink"></span>
+    <span>CURRENTLY ON SITE</span>
+    <span>SHIPPING CLINICAL FEATURES DAILY</span>
+    <span>MANDAPP IN ACTIVE BUILD</span>
+    <span>OPEN TO REMOTE ROLES</span>
+  </div>
+</section>
+
+<!-- ============ SHEET G-300 : GENERAL NOTES ============ -->
+<section id="notes" class="sheet">
+  <div class="sheet-head reveal">
+    <h2>General Notes</h2>
+    <span class="tag">SHEET G-300 — U.N.O.</span>
+  </div>
+  <div class="notes reveal">
+    <article>
+      <div class="n-no">NOTE 01</div>
+      <h3>All code to be type-safe U.N.O.</h3>
+      <p>Unless noted otherwise — and it's never noted otherwise. Contracts at every boundary: API schemas, component props, database models. Surprises belong in birthdays, not runtimes.</p>
+    </article>
+    <article>
+      <div class="n-no">NOTE 02</div>
+      <h3>Verify dimensions on site</h3>
+      <p>Drawings lie; production doesn't. I ship in small, reviewable commits, measure against real traffic, and treat every bug report as a survey of the actual terrain.</p>
+    </article>
+    <article>
+      <div class="n-no">NOTE 03</div>
+      <h3>Build for the people not on the drawing</h3>
+      <p>The dealer in a tier-2 city. The vendor who runs his business on WhatsApp. The nurse mid-shift. Good architecture serves the user who will never read the spec.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SHEET H-500 : SITE HISTORY ============ -->
+<section id="history" class="sheet">
+  <div class="sheet-head reveal">
+    <h2>Site History</h2>
+    <span class="tag">SHEET H-500 — CONSTRUCTION LOG</span>
+  </div>
+  <div class="history reveal">
+
+    <article class="phase current">
+      <div class="p-no">PHASE 04</div>
+      <div class="p-date">2022 — PRESENT</div>
+      <div class="p-role">Senior Software Engineer
+        <small>PwnedLabs · Remote</small>
+      </div>
+      <div class="p-note">Full-stack engineering on a hands-on cybersecurity labs platform — building the systems people learn to break, and the architecture that holds while they try. The superstructure phase.</div>
+    </article>
+
+    <article class="phase">
+      <div class="p-no">PHASE 03</div>
+      <div class="p-date">MAY 2020 — FEB 2022</div>
+      <div class="p-role">Senior System Analyst
+        <small>AlignTogether Solutions · Bhopal</small>
+      </div>
+      <div class="p-note">Stepped from writing code to designing systems — leading development through agile direction while staying hands-on with the hardest problems. Deployed on-site to enterprise clients:</div>
+    </article>
+
+    <article class="phase sub">
+      <div class="p-no">03-A</div>
+      <div class="p-date">VIA ALIGNTOGETHER</div>
+      <div class="p-role">LeadSquared
+        <small>Client Engagement · SaaS CRM</small>
+      </div>
+      <div class="p-note">Embedded with the engineering team of one of India's fastest-growing sales execution platforms.</div>
+    </article>
+
+    <article class="phase sub">
+      <div class="p-no">03-B</div>
+      <div class="p-date">VIA ALIGNTOGETHER</div>
+      <div class="p-role">Pine Labs
+        <small>Client Engagement · Fintech</small>
+      </div>
+      <div class="p-note">Built for a merchant-payments giant — where uptime isn't a metric, it's money moving.</div>
+    </article>
+
+    <article class="phase">
+      <div class="p-no">PHASE 02</div>
+      <div class="p-date">NOV 2018 — MAY 2020</div>
+      <div class="p-role">PHP / Laravel Developer
+        <small>HackerKernel · Bhopal</small>
+      </div>
+      <div class="p-note">Backend foundations: Laravel applications, APIs, and the discipline of shipping for real clients on real deadlines.</div>
+    </article>
+
+    <article class="phase">
+      <div class="p-no">PHASE 01</div>
+      <div class="p-date">AUG 2017 — FEB 2018</div>
+      <div class="p-role">Full Stack Developer
+        <small>Jansampark · Bhopal</small>
+      </div>
+      <div class="p-note">Groundbreaking. First production code, first full-stack ownership, first lesson that software, like concrete, sets fast.</div>
+    </article>
+
   </div>
 
-  <div id="hud">
-    <button id="mute" aria-label="Toggle sound" title="sound">♪</button>
-    <div id="hint" aria-live="polite"></div>
+  <div class="permits reveal">
+    <article>
+      <div class="p-tag">Permit — Education</div>
+      <h3>BCA, Computer Science</h3>
+      <p>SAIFIA COLLEGE OF SCIENCE, BHOPAL · 2017—2021</p>
+    </article>
+    <article>
+      <div class="p-tag">Inspections Passed — Certifications</div>
+      <h3>FrontendExpert · Terraform</h3>
+      <p>UI ENGINEERING + INFRASTRUCTURE-AS-CODE · APPROVED FOR OCCUPANCY</p>
+    </article>
   </div>
+</section>
 
-  <div id="overlay" class="hidden" aria-hidden="true">
-    <button id="close" aria-label="Close">×</button>
-    <div id="vignette"></div>
+<!-- ============ SHEET C-400 : RFP ============ -->
+<section id="contact" class="sheet contact">
+  <div class="sheet-head reveal">
+    <h2>Request for Proposal</h2>
+    <span class="tag">SHEET C-400 — TENDERS OPEN</span>
   </div>
+  <div class="reveal">
+    <p class="rfp">Have a platform to raise, a product to ship, or a team that needs a senior pair of hands?</p>
+    <h2 class="big"><a href="mailto:dkhan9591@gmail.com">LET'S<br>BREAK<br>GROUND&nbsp;↗</a></h2>
+    <div class="links">
+      <a href="mailto:dkhan9591@gmail.com">EMAIL</a>
+      <a href="https://github.com/danish-khan-I" target="_blank" rel="noopener">GITHUB</a>
+      <a href="https://www.linkedin.com/in/danish-khan-i/" target="_blank" rel="noopener">LINKEDIN</a>
+      <a href="https://wa.me/919340917569" target="_blank" rel="noopener">WHATSAPP</a>
+    </div>
+  </div>
+</section>
 
-  <noscript>
-    <p style="color:#e8e6d8;font-family:monospace;padding:2rem">this room needs javascript to open.</p>
-  </noscript>
+<footer>
+  <span>© 2026 DANISH — ALL DRAWINGS REMAIN PROPERTY OF THE ENGINEER</span>
+  <span>DRAFTED IN BHOPAL <span class="o">✦</span> SET IN BRICOLAGE GROTESQUE <span class="o">✦</span> NO TEMPLATES WERE HARMED</span>
+</footer>
 
-  <script type="module" src="main.js"></script>
+<script>
+(function(){
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+  /* ---------- warped drafting grid ---------- */
+  const cv = document.getElementById('gridCanvas');
+  const ctx = cv.getContext('2d');
+  let W, H, cols, rows, pts;
+  const SP = 42;                      // grid spacing
+  const mouse = {x:-9999, y:-9999};
+  const sm = {x:-9999, y:-9999};      // smoothed
+
+  function buildGrid(){
+    W = cv.width = innerWidth;
+    H = cv.height = innerHeight;
+    cols = Math.ceil(W/SP)+1;
+    rows = Math.ceil(H/SP)+1;
+    pts = new Float32Array(cols*rows*2);
+  }
+
+  function warp(x, y){
+    const dx = x - sm.x, dy = y - sm.y;
+    const d2 = dx*dx + dy*dy;
+    const R = 190, R2 = R*R;
+    if (d2 > R2 || d2 === 0) return [x, y];
+    const d = Math.sqrt(d2);
+    const f = (1 - d/R);
+    const push = f*f*34;
+    return [x + (dx/d)*push, y + (dy/d)*push];
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    // compute warped points
+    for (let r=0;r<rows;r++){
+      for (let c=0;c<cols;c++){
+        const i=(r*cols+c)*2;
+        const [wx,wy]=warp(c*SP, r*SP);
+        pts[i]=wx; pts[i+1]=wy;
+      }
+    }
+    // minor lines
+    ctx.lineWidth = 1;
+    for (let r=0;r<rows;r++){
+      ctx.beginPath();
+      ctx.strokeStyle = (r%4===0) ? 'rgba(94,134,232,.20)' : 'rgba(94,134,232,.08)';
+      for (let c=0;c<cols;c++){
+        const i=(r*cols+c)*2;
+        c===0 ? ctx.moveTo(pts[i],pts[i+1]) : ctx.lineTo(pts[i],pts[i+1]);
+      }
+      ctx.stroke();
+    }
+    for (let c=0;c<cols;c++){
+      ctx.beginPath();
+      ctx.strokeStyle = (c%4===0) ? 'rgba(94,134,232,.20)' : 'rgba(94,134,232,.08)';
+      for (let r=0;r<rows;r++){
+        const i=(r*cols+c)*2;
+        r===0 ? ctx.moveTo(pts[i],pts[i+1]) : ctx.lineTo(pts[i],pts[i+1]);
+      }
+      ctx.stroke();
+    }
+  }
+
+  function loop(){
+    sm.x += (mouse.x - sm.x)*0.14;
+    sm.y += (mouse.y - sm.y)*0.14;
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  buildGrid();
+  if (reduced || !finePointer){ sm.x = -9999; sm.y = -9999; draw(); }
+  else { requestAnimationFrame(loop); }
+  addEventListener('resize', ()=>{ buildGrid(); if (reduced || !finePointer) draw(); });
+
+  /* ---------- rulers ---------- */
+  const RT = document.getElementById('rulerTop');
+  const RL = document.getElementById('rulerLeft');
+  const RS = 28;
+  function drawRulers(){
+    if (innerWidth <= 720) return;
+    // top
+    RT.width = innerWidth - RS; RT.height = RS;
+    const t = RT.getContext('2d');
+    t.clearRect(0,0,RT.width,RT.height);
+    t.strokeStyle = 'rgba(159,180,230,.65)'; t.fillStyle = 'rgba(159,180,230,.8)';
+    t.font = '8px JetBrains Mono, monospace'; t.lineWidth = 1;
+    for (let x=0;x<RT.width;x+=10){
+      const real = x + RS;
+      let h = 5;
+      if (real % 100 === 0){ h = 13; t.fillText(real, x+3, 9); }
+      else if (real % 50 === 0){ h = 9; }
+      t.beginPath(); t.moveTo(x+.5, RS); t.lineTo(x+.5, RS-h); t.stroke();
+    }
+    // left
+    RL.width = RS; RL.height = innerHeight - RS;
+    const l = RL.getContext('2d');
+    l.clearRect(0,0,RL.width,RL.height);
+    l.strokeStyle = 'rgba(159,180,230,.65)'; l.fillStyle = 'rgba(159,180,230,.8)';
+    l.font = '8px JetBrains Mono, monospace'; l.lineWidth = 1;
+    for (let y=0;y<RL.height;y+=10){
+      const real = y + RS;
+      let w = 5;
+      if (real % 100 === 0){
+        w = 13;
+        l.save(); l.translate(9, y+3); l.rotate(-Math.PI/2); l.fillText(real, -l.measureText(real).width, 0); l.restore();
+      } else if (real % 50 === 0){ w = 9; }
+      l.beginPath(); l.moveTo(RS, y+.5); l.lineTo(RS-w, y+.5); l.stroke();
+    }
+  }
+  drawRulers();
+  addEventListener('resize', drawRulers);
+
+  /* ---------- CAD cursor + coordinate readout ---------- */
+  const cur = document.getElementById('cursor');
+  const coords = document.getElementById('coords');
+  const mX = document.getElementById('markerX');
+  const mY = document.getElementById('markerY');
+  if (finePointer){
+    addEventListener('mousemove', e=>{
+      mouse.x = e.clientX; mouse.y = e.clientY;
+      cur.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      coords.textContent = `X ${String(e.clientX).padStart(4,'0')} · Y ${String(e.clientY).padStart(4,'0')}`;
+      mX.style.left = e.clientX + 'px';
+      mY.style.top  = e.clientY + 'px';
+      // keep readout on screen
+      coords.style.left = (e.clientX > innerWidth - 180) ? '-150px' : '16px';
+      coords.style.top  = (e.clientY > innerHeight - 60) ? '-34px' : '12px';
+    }, {passive:true});
+  } else {
+    cur.style.display = 'none';
+  }
+
+  /* ---------- live name dimension ---------- */
+  const nameEl = document.getElementById('heroName');
+  const dimEl = document.getElementById('nameDim');
+  function measureName(){
+    const w = Math.round(nameEl.getBoundingClientRect().width);
+    dimEl.textContent = `SPAN — ${w} PX — VERIFY ON SITE`;
+  }
+  if (document.fonts && document.fonts.ready){ document.fonts.ready.then(measureName); }
+  measureName();
+  addEventListener('resize', measureName);
+
+  /* ---------- letters fill on load ---------- */
+  if (!reduced){
+    const letters = nameEl.querySelectorAll('span');
+    letters.forEach((s,i)=>setTimeout(()=>s.classList.add('filled'), 500 + i*120));
+  } else {
+    nameEl.querySelectorAll('span').forEach(s=>s.classList.add('filled'));
+  }
+
+  /* ---------- Bhopal clock + sun/moon ---------- */
+  const skyIcon = document.getElementById('skyIcon');
+  const localeTime = document.getElementById('localeTime');
+  const SUN = '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M18.7 5.3l-1.8 1.8M7.1 16.9l-1.8 1.8"/>';
+  const MOON = '<path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z"/>';
+  function tickLocale(){
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone:'Asia/Kolkata', hour:'2-digit', minute:'2-digit', hour12:false
+    }).formatToParts(new Date());
+    const h = +parts.find(p=>p.type==='hour').value;
+    const m = parts.find(p=>p.type==='minute').value;
+    localeTime.textContent = `${String(h).padStart(2,'0')}:${m}`;
+    const isDay = h >= 6 && h < 18;
+    skyIcon.innerHTML = isDay ? SUN : MOON;
+    skyIcon.classList.toggle('is-night', !isDay);
+  }
+  tickLocale();
+  setInterval(tickLocale, 30000);
+
+  /* ---------- duplicate marquee for seamless loop ---------- */
+  const track = document.getElementById('marqueeTrack');
+  track.innerHTML += track.innerHTML;
+
+  /* ---------- reveals ---------- */
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+})();
+</script>
 </body>
 </html>
